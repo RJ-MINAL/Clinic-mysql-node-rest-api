@@ -1,24 +1,12 @@
-const http = require('http');
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
+const app = require('./config/server');
+const user = require('./routes/user');
 
-//const user = require('./routes/user');
+app.use('/api/news', user);
 
-// settings
-app.set('port', process.env.PORT || 3000);
-
-// middlewares
-//app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-// routes
 app.get('/', (req, res) => {
-  res.redirect('/api/users');
+  res.redirect('/api/news/');
 });
 
-require('./routes/user')(app);
-
-http.createServer(app).listen(app.get('port'), () => {
-  console.log('server on port', app.get('port'));
+app.listen(app.get('port'), () => {
+  console.log('server on port ', app.get('port'));
 });
