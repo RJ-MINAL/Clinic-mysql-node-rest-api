@@ -5,6 +5,6 @@ module.exports = () => {
     host: 'localhost',
     user: 'nodeUser',
     password: '2012',
-    database: 'impati'
+    database: 'testApi'
   });
 };

@@ -1,11 +1,4 @@
-const mysql = require('mysql');
-
-connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'nodeUser',
-  password: '2012',
-  database: 'testApi'
-});
+const connection = require('../config/dbConnection')();
 
 let userModel = {};
 
