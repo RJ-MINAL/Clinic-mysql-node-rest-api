@@ -14,10 +14,13 @@ avatarModel.getAvatar = callback => {
 avatarModel.getAvatarById = (id, callback) => {
   if (!connection) return;
 
-  connection.query(`SELECT * FROM avatar WHERE id = ${connection.escape(id)}`, (err, rows) => {
-    if (err) throw err;
-    else callback(null, rows);
-  });
+  connection.query(
+    `SELECT * FROM avatar WHERE id = ${connection.escape(id)}`,
+    (err, rows) => {
+      if (err) throw err;
+      else callback(null, rows);
+    }
+  );
 };
 
 avatarModel.insertAvatar = (dataValue, callback) => {
@@ -31,26 +34,23 @@ avatarModel.insertAvatar = (dataValue, callback) => {
   });
 };
 
-// avatarModel.updateUser = (userData, callback) => {
-//   if (connection) {
-//     const sql = `
-//       UPDATE impati.avatar SET
-//       username = ${connection.escape(userData.username)},
-//       password = ${connection.escape(userData.password)},
-//       email = ${connection.escape(userData.email)}
-//       WHERE id = ${connection.escape(userData.id)}`;
+avatarModel.updateAvatar = (dataValue, callback) => {
+  if (connection) {
+    const sql = `
+      UPDATE avatar SET
+      code_image = ${connection.escape(dataValue.code_image)},
+      skin_color = ${connection.escape(dataValue.skin_color)},
+      cloth_color = ${connection.escape(dataValue.cloth_color)},
+      hair_color = ${connection.escape(dataValue.hair_color)},
+      active = ${connection.escape(dataValue.active)}
+      WHERE id = ${connection.escape(dataValue.id)}`;
 
-//     connection.query(sql, function(err, result) {
-//       if (err) {
-//         throw err;
-//       } else {
-//         callback(null, {
-//           msg: 'success'
-//         });
-//       }
-//     });
-//   }
-// };
+    connection.query(sql, function(err, result) {
+      if (err) throw err;
+      else callback(null, { ...dataValue });
+    });
+  }
+};
 
 // avatarModel.deleteUser = (id, callback) => {
 //   if (connection) {

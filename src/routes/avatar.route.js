@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Avatar = require('../models/avatar.model');
-const { JsonError, InsertSuccess } = require('../models/response.model');
+const { JsonError, JsonSuccess } = require('../models/response.model');
 
 router.get('/', (req, res) => {
   Avatar.getAvatar((err, data) => {
@@ -30,33 +30,31 @@ router.post('/', (req, res) => {
   };
 
   Avatar.insertAvatar(avatarData, (err, data) => {
-    if (data && data.id) return InsertSuccess(res, 'avatar', data);
+    if (data && data.id)
+      return JsonSuccess(res, 'avatar', data, 'Avatar creado exitosamente');
 
     // res.redirect('/users/' + data.insertId);
     return JsonError(res, 500, 'Internal Error, no data returned');
   });
 });
 
-// router.put('/:id', (req, res) => {
-//   const userData = {
-//     id: req.params.id,
-//     username: req.body.username,
-//     email: req.body.email,
-//     password: req.body.password,
-//     created_at: null,
-//     updated_at: null
-//   };
-//   Avatar.updateUser(userData, function(err, data) {
-//     if (data && data.msg) {
-//       res.status(200).json({ data });
-//     } else {
-//       res.status(500).json({
-//         success: false,
-//         msg: 'Error'
-//       });
-//     }
-//   });
-// });
+router.put('/:id', (req, res) => {
+  const avatarData = {
+    id: req.params.id,
+    code_image: req.body.code_image,
+    skin_color: req.body.skin_color,
+    cloth_color: req.body.cloth_color,
+    hair_color: req.body.hair_color,
+    active: req.body.active
+  };
+
+  Avatar.updateAvatar(avatarData, function(err, data) {
+    if (data && data.id)
+      return JsonSuccess(res, 'avatar', data, `Avatar with ID ${data.id} was updated`);
+
+    return JsonError(res, 500, 'Internal Error, no data returned');
+  });
+});
 
 // router.delete('/:id', (req, res) => {
 //   const id = req.params.id;

@@ -8,19 +8,18 @@ function JsonError(res, status, message) {
   });
 }
 
-function InsertSuccess(res, title, body) {
+function JsonSuccess(res, title, body, message) {
+  let resContent = {};
+  resContent[title] = { ...body };
+
   return res.status(200).json({
     info: {
       type: 'success',
-      message: `${title} creado exitosamente `
+      message
     },
-    responseContent: {
-      title: {
-        ...body
-      }
-    }
+    responseContent: resContent
   });
 }
 
 exports.JsonError = JsonError;
-exports.InsertSuccess = InsertSuccess;
+exports.JsonSuccess = JsonSuccess;
