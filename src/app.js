@@ -1,10 +1,10 @@
 const app = require('./config/server');
-const user = require('./routes/user');
+const avatar = require('./routes/avatar.route');
 
-app.use('/api/news', user);
+app.use('/api/avatar', avatar);
 
 app.get('/', (req, res) => {
-  res.redirect('/api/news/');
+  res.redirect('/api/avatar/');
 });
 
 app.listen(app.get('port'), () => {
