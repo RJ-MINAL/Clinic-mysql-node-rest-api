@@ -14,13 +14,10 @@ avatarModel.getAvatar = callback => {
 avatarModel.getAvatarById = (id, callback) => {
   if (!connection) return;
 
-  connection.query(
-    `SELECT * FROM avatar WHERE id = ${connection.escape(id)}`,
-    (err, rows) => {
-      if (err) throw err;
-      else callback(null, rows);
-    }
-  );
+  connection.query(`SELECT * FROM avatar WHERE id = ${connection.escape(id)}`, (err, rows) => {
+    if (err) throw err;
+    else callback(null, rows);
+  });
 };
 
 avatarModel.insertAvatar = (dataValue, callback) => {
@@ -28,7 +25,9 @@ avatarModel.insertAvatar = (dataValue, callback) => {
 
   connection.query('INSERT INTO avatar SET ?', dataValue, (err, result) => {
     if (err) throw err;
-    else callback(null, { insertId: result.insertId });
+
+    dataValue.id = result.insertId;
+    callback(null, { ...dataValue });
   });
 };
 
