@@ -26,10 +26,10 @@ avatarModel.getAvatarById = (id, callback) => {
 avatarModel.insertAvatar = (dataValue, callback) => {
   if (!connection) return;
 
-  // connection.query('INSERT INTO avatar SET ?', dataValue, (err, result) => {
-  //   if (err) throw err;
-  //   else callback(null, { insertId: result.insertId });
-  // });
+  connection.query('INSERT INTO avatar SET ?', dataValue, (err, result) => {
+    if (err) throw err;
+    else callback(null, { insertId: result.insertId });
+  });
 };
 
 // avatarModel.updateUser = (userData, callback) => {

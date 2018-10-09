@@ -16,14 +16,13 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  return res.status(500).send(req.body);
-
   const avatarData = {
     id: null,
     code_image: req.body.code_image,
     skin_color: req.body.skin_color,
     cloth_color: req.body.cloth_color,
-    hair_color: req.body.hair_color
+    hair_color: req.body.hair_color,
+    active: req.body.active
   };
 
   Avatar.insertAvatar(avatarData, (err, data) => {
