@@ -1,9 +1,11 @@
 const http = require('http');
 const app = require('./config/server');
 const avatar = require('./routes/avatar.route');
+const patient = require('./routes/patient.route');
 
 // routes
 app.use('/api/avatar', avatar);
+app.use('/api/patient', patient);
 
 app.get('/', (req, res) => {
   res.redirect('/api/avatar/');
