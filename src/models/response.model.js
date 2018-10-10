@@ -1,4 +1,6 @@
-function JsonError(res, status, message) {
+function JsonError(res, status, message, err) {
+  if (err) console.log(err);
+
   return res.status(status).json({
     info: {
       type: 'error',
@@ -21,14 +23,20 @@ function JsonSuccess(res, title, body, message) {
   });
 }
 
-function CustomError(code, message, retornedError) {
+function SetError(code, message, dbError) {
+  if (dbError) {
+    dbError.message = message;
+    dbError.status = code;
+    return dbError;
+  }
+
   let err = new Error(message);
+  err.message = message;
   err.status = code;
-  err.retornedError = retornedError;
 
   return err;
 }
 
 exports.JsonError = JsonError;
 exports.JsonSuccess = JsonSuccess;
-exports.CustomError = CustomError;
+exports.SetError = SetError;

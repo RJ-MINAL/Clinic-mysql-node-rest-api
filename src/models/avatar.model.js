@@ -1,42 +1,46 @@
 const connection = require('../config/dbConnection')();
-const { CustomError } = require('../models/response.model');
+const { SetError } = require('../models/response.model');
 
 let avatarModel = {};
 
 avatarModel.getAvatar = callback => {
-  if (!connection) throw CustomError(500, 'Internal Error, Server down');
+  if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   connection.query('SELECT * FROM avatar ORDER BY id', (err, rows) => {
-    if (err) throw err;
-    else callback(null, rows);
+    if (err) return callback(SetError(500, 'Internal Error', err), null);
+    else return callback(null, rows);
   });
 };
 
 avatarModel.getAvatarById = (id, callback) => {
-  if (!connection) throw CustomError(500, 'Internal Error, Server down');
+  if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   connection.query(
     `SELECT * FROM avatar WHERE id = ${connection.escape(id)}`,
-    (err, rows) => {
-      if (err) throw err;
-      else callback(null, rows);
+    (err, row) => {
+      if (err) return callback(SetError(500, 'Internal Error', err), null);
+
+      if (row === undefined || row.length == 0)
+        return callback(SetError(404, 'The Avatar with the given ID was not found', err));
+
+      return callback(null, row);
     }
   );
 };
 
 avatarModel.insertAvatar = (dataValue, callback) => {
-  if (!connection) throw CustomError(500, 'Internal Error, Server down');
+  if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   connection.query('INSERT INTO avatar SET ?', dataValue, (err, result) => {
-    if (err) throw err;
+    if (err) return callback(SetError(500, 'Internal Error', err), null);
 
     dataValue.id = result.insertId;
-    callback(null, { ...dataValue });
+    return callback(null, { ...dataValue });
   });
 };
 
 avatarModel.updateAvatar = (dataValue, callback) => {
-  if (!connection) throw CustomError(500, 'Internal Error, Server down');
+  if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   const sql = `
     UPDATE avatar SET
@@ -48,25 +52,27 @@ avatarModel.updateAvatar = (dataValue, callback) => {
     WHERE id = ${connection.escape(dataValue.id)}`;
 
   connection.query(sql, function(err, result) {
-    if (err) throw err;
-    else callback(null, { ...dataValue });
+    if (err) return callback(SetError(500, 'Internal Error', err), null);
+    else return callback(null, { ...dataValue });
   });
 };
 
 avatarModel.deleteAvatar = (id, callback) => {
-  if (!connection) throw CustomError(500, 'Internal Error, Server down');
+  if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   const sqlExists = `SELECT * FROM avatar WHERE id = ${connection.escape(id)}`;
 
   connection.query(sqlExists, (err, row) => {
-    if (row) {
-      console.log('Delete', row);
-      const sql = `DELETE FROM avatar WHERE id = ${connection.escape(id)}`;
-      connection.query(sql, (err, result) => {
-        if (err) throw err;
-        else return callback(null, { ...row[0] });
-      });
-    } else throw CustomError(404, `The Avatar with the ID ${id} was not found`);
+    if (err) return callback(SetError(500, 'Internal Error', err), null);
+
+    if (row === undefined || row.length == 0)
+      return callback(SetError(404, 'The Avatar with the given ID was not found', err));
+
+    const sql = `DELETE FROM avatar WHERE id = ${connection.escape(id)}`;
+    connection.query(sql, (err, result) => {
+      if (err) return callback(SetError(500, 'Internal Error', err), null);
+      else return callback(null, { ...row[0] });
+    });
   });
 };
 

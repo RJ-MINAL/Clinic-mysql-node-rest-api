@@ -5,14 +5,18 @@ const { JsonError, JsonSuccess } = require('../models/response.model');
 
 router.get('/', (req, res) => {
   Avatar.getAvatar((err, data) => {
-    res.status(200).json(data);
+    if (err) return JsonError(res, err.status, err.message, err);
+
+    return res.status(200).json(data);
   });
 });
 
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   Avatar.getAvatarById(id, (err, data) => {
-    res.status(200).json(data);
+    if (err) return JsonError(res, err.status, err.message, err);
+
+    return res.status(200).json(data);
   });
 });
 
@@ -30,10 +34,11 @@ router.post('/', (req, res) => {
   };
 
   Avatar.insertAvatar(avatarData, (err, data) => {
+    if (err) return JsonError(res, err.status, err.message, err);
+
     if (data && data.id)
       return JsonSuccess(res, 'avatar', data, 'Avatar creado exitosamente');
 
-    // res.redirect('/users/' + data.insertId);
     return JsonError(res, 500, 'Internal Error, no data returned');
   });
 });
@@ -49,6 +54,8 @@ router.put('/:id', (req, res) => {
   };
 
   Avatar.updateAvatar(avatarData, function(err, data) {
+    if (err) return JsonError(res, err.status, err.message, err);
+
     if (data && data.id)
       return JsonSuccess(res, 'avatar', data, `Avatar with ID ${data.id} was updated`);
 
@@ -59,7 +66,8 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
   Avatar.deleteAvatar(id, (err, data) => {
-    //if ((data && data.msg === 'deleted') || data.msg == 'not Exists') {
+    if (err) return JsonError(res, err.status, err.message, err);
+
     if (data && data.id)
       return JsonSuccess(res, 'avatar', data, `Avatar with ID ${data.id} was deleted`);
 
