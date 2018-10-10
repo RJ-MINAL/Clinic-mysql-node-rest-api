@@ -56,20 +56,15 @@ router.put('/:id', (req, res) => {
   });
 });
 
-// router.delete('/:id', (req, res) => {
-//   const id = req.params.id;
-//   Avatar.deleteUser(id, (err, data) => {
-//     if ((data && data.msg === 'deleted') || data.msg == 'not Exists') {
-//       res.json({
-//         success: 'true',
-//         data
-//       });
-//     } else {
-//       res.status(500).json({
-//         msg: 'Error'
-//       });
-//     }
-//   });
-// });
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  Avatar.deleteAvatar(id, (err, data) => {
+    //if ((data && data.msg === 'deleted') || data.msg == 'not Exists') {
+    if (data && data.id)
+      return JsonSuccess(res, 'avatar', data, `Avatar with ID ${data.id} was deleted`);
+
+    return JsonError(res, 500, 'Internal Error, no data returned');
+  });
+});
 
 module.exports = router;

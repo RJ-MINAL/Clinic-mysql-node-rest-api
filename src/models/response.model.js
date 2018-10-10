@@ -21,5 +21,14 @@ function JsonSuccess(res, title, body, message) {
   });
 }
 
+function CustomError(code, message, retornedError) {
+  let err = new Error(message);
+  err.status = code;
+  err.retornedError = retornedError;
+
+  return err;
+}
+
 exports.JsonError = JsonError;
 exports.JsonSuccess = JsonSuccess;
+exports.CustomError = CustomError;
