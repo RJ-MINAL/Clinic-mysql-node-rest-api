@@ -17,7 +17,7 @@ router.get('/:id', (req, res) => {
   Patient.getById(id, (err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    return res.status(200).json(data);
+    return JsonSuccess(res, 'patient', data, 'Query successful');
   });
 });
 

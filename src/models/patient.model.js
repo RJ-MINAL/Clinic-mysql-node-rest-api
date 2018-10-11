@@ -16,19 +16,60 @@ patientModel.getAll = callback => {
 patientModel.getById = (id, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
-  connection.query(
-    `SELECT * FROM pacient WHERE id = ${connection.escape(id)}`,
-    (err, rows) => {
-      if (err) return callback(SetError(500, 'Internal Error', err), null);
+  const sql = `
+    SELECT pc.*, av.id as av_id, av.*, 
+	    cl.id as cl_id, cl.name as cl_name,
+      oc.id as oc_id , oc.description,
+      ct.id as ct_id , ct.name as ct_name, ct.code
+    FROM pacient pc 
+    LEFT JOIN avatar av on pc.id_avatar = av.id
+    LEFT JOIN clinic cl on pc.id_clinic = cl.id
+    LEFT JOIN ocupation oc on pc.id_ocupation = oc.id
+    LEFT JOIN country ct on pc.id_country = ct.id
+    WHERE pc.id = ${connection.escape(id)}
+  `;
 
-      if (rows === undefined || rows.length == 0)
-        return callback(
-          SetError(404, 'The Patient with the given ID was not found', err)
-        );
+  connection.query(sql, (err, rows) => {
+    if (err) return callback(SetError(500, 'Internal Error', err), null);
 
-      callback(null, rows[0]);
-    }
-  );
+    if (rows === undefined || rows.length == 0)
+      return callback(SetError(404, 'The Patient with the given ID was not found', err));
+
+    const row = rows[0];
+    const patient = {
+      id: row.id,
+      name: row.name,
+      last_name: row.last_name,
+      phone: row.phone,
+      dpi: row.dpi,
+      email: row.email,
+      incription_date: row.incription_date,
+      age: row.age,
+      active: row.active,
+      clinic: {
+        id: row.cl_id,
+        name: row.cl_name
+      },
+      ocupation: {
+        id: row.oc_id,
+        description: row.description
+      },
+      avatar: {
+        id: row.av_id,
+        code_image: row.code_image,
+        skin_color: row.skin_color,
+        cloth_color: row.cloth_color,
+        hair_color: row.hair_color
+      },
+      country: {
+        id: row.ct_id,
+        name: row.ct_name,
+        code: row.code
+      }
+    };
+
+    callback(null, patient);
+  });
 };
 
 patientModel.insert = (dataSchema, callback) => {
