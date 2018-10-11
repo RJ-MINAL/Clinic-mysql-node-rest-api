@@ -130,7 +130,9 @@ patientModel.delete = (id, callback) => {
 
 function validatePatient(body) {
   const schema = {
-    id: Joi.number().integer(),
+    id: Joi.number()
+      .integer()
+      .min(1),
     name: Joi.string()
       .min(5)
       .max(50)
@@ -164,15 +166,19 @@ function validatePatient(body) {
       .length(10)
       .required(),
     id_clinic: Joi.number()
+      .integer()
       .min(1)
       .required(),
     id_ocupation: Joi.number()
+      .integer()
       .min(1)
       .required(),
     id_avatar: Joi.number()
+      .integer()
       .min(1)
       .required(),
     id_country: Joi.number()
+      .integer()
       .min(1)
       .required(),
     active: Joi.number()

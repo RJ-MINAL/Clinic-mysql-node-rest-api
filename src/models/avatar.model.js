@@ -1,9 +1,10 @@
+const Joi = require('joi');
 const connection = require('../config/dbConnection')();
 const { SetError } = require('../models/response.model');
 
 let avatarModel = {};
 
-avatarModel.getAvatar = callback => {
+avatarModel.getAll = callback => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   connection.query('SELECT * FROM avatar ORDER BY id', (err, rows) => {
@@ -12,7 +13,7 @@ avatarModel.getAvatar = callback => {
   });
 };
 
-avatarModel.getAvatarById = (id, callback) => {
+avatarModel.getById = (id, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   connection.query(
@@ -28,36 +29,36 @@ avatarModel.getAvatarById = (id, callback) => {
   );
 };
 
-avatarModel.insertAvatar = (dataValue, callback) => {
+avatarModel.insert = (dataSchema, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
-  connection.query('INSERT INTO avatar SET ?', dataValue, (err, result) => {
+  connection.query('INSERT INTO avatar SET ?', dataSchema, (err, result) => {
     if (err) return callback(SetError(500, 'Internal Error', err), null);
 
-    dataValue.id = result.insertId;
-    return callback(null, { ...dataValue });
+    dataSchema.id = result.insertId;
+    return callback(null, { ...dataSchema });
   });
 };
 
-avatarModel.updateAvatar = (dataValue, callback) => {
+avatarModel.update = (dataSchema, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   const sql = `
     UPDATE avatar SET
-    code_image = ${connection.escape(dataValue.code_image)},
-    skin_color = ${connection.escape(dataValue.skin_color)},
-    cloth_color = ${connection.escape(dataValue.cloth_color)},
-    hair_color = ${connection.escape(dataValue.hair_color)},
-    active = ${connection.escape(dataValue.active)}
-    WHERE id = ${connection.escape(dataValue.id)}`;
+    code_image = ${connection.escape(dataSchema.code_image)},
+    skin_color = ${connection.escape(dataSchema.skin_color)},
+    cloth_color = ${connection.escape(dataSchema.cloth_color)},
+    hair_color = ${connection.escape(dataSchema.hair_color)},
+    active = ${connection.escape(dataSchema.active)}
+    WHERE id = ${connection.escape(dataSchema.id)}`;
 
   connection.query(sql, function(err, result) {
     if (err) return callback(SetError(500, 'Internal Error', err), null);
-    else return callback(null, { ...dataValue });
+    else return callback(null, { ...dataSchema });
   });
 };
 
-avatarModel.deleteAvatar = (id, callback) => {
+avatarModel.delete = (id, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   const sqlExists = `SELECT * FROM avatar WHERE id = ${connection.escape(id)}`;
@@ -76,4 +77,34 @@ avatarModel.deleteAvatar = (id, callback) => {
   });
 };
 
-module.exports = avatarModel;
+function validateAvatar(body) {
+  const schema = {
+    id: Joi.number()
+      .integer()
+      .min(1),
+    code_image: Joi.number()
+      .integer()
+      .min(1)
+      .required(),
+    skin_color: Joi.string()
+      .min(3)
+      .max(7)
+      .required(),
+    cloth_color: Joi.string()
+      .min(3)
+      .max(7)
+      .required(),
+    hair_color: Joi.string()
+      .min(3)
+      .max(7)
+      .required(),
+    active: Joi.number()
+      .equal([0, 1])
+      .default(1)
+  };
+
+  return Joi.validate(body, schema);
+}
+
+exports.Avatar = avatarModel;
+exports.validateRequest = validateAvatar;
