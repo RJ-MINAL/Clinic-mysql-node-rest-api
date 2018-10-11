@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Patient = require('../models/patient.model');
 const { JsonError, JsonSuccess } = require('../models/response.model');
+require('./patient-history.route')(router);
 
 router.get('/', (req, res) => {
   Patient.getAll((err, data) => {

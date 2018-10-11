@@ -12,7 +12,11 @@ function JsonError(res, status, message, err) {
 
 function JsonSuccess(res, title, body, message) {
   let resContent = {};
-  resContent[title] = { ...body };
+
+  console.log(body.constructor);
+
+  if (body.constructor === Array) resContent[title] = body;
+  else resContent[title] = { ...body };
 
   return res.status(200).json({
     info: {
