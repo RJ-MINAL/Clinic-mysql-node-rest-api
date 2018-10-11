@@ -1,4 +1,4 @@
-//const Joi = require("joi");
+const Joi = require('joi');
 const connection = require('../config/dbConnection')();
 const { SetError } = require('../models/response.model');
 
@@ -37,7 +37,7 @@ patientModel.getById = (id, callback) => {
 
     const row = rows[0];
     const patient = {
-      id: row.id,
+      id: id,
       name: row.name,
       last_name: row.last_name,
       phone: row.phone,
@@ -128,7 +128,7 @@ patientModel.delete = (id, callback) => {
   });
 };
 
-/* function validatePatient(body) {
+function validatePatient(body) {
   const schema = {
     id: Joi.number().integer(),
     name: Joi.string()
@@ -175,11 +175,13 @@ patientModel.delete = (id, callback) => {
     id_country: Joi.number()
       .min(1)
       .required(),
-    active: Joi.boolean().default(1)
+    active: Joi.number()
+      .equal([0, 1])
+      .default(1)
   };
 
   return Joi.validate(body, schema);
-} */
+}
 
-module.exports = patientModel;
-//exports.validateRequest = validatePatient;
+exports.Patient = patientModel;
+exports.validateRequest = validatePatient;

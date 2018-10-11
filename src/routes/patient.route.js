@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Patient = require('../models/patient.model');
+const { Patient, validateRequest } = require('../models/patient.model');
 const { JsonError, JsonSuccess } = require('../models/response.model');
 require('./patient-history.route')(router);
 
@@ -26,6 +26,9 @@ router.post('/', (req, res) => {
     return JsonError(res, 400, 'requestContent.patient is missing in the request body');
 
   const content = req.body.requestContent.patient;
+  const { error } = validateRequest(content);
+  if (error) return JsonError(res, 400, error.details[0].message);
+
   const dataSchema = {
     id: null,
     name: content.name,
@@ -55,6 +58,9 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const content = req.body;
+  const { error } = validateRequest(content);
+  if (error) return JsonError(res, 400, error.details[0].message);
+
   const dataSchema = {
     id: req.params.id,
     name: content.name,

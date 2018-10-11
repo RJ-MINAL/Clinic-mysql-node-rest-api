@@ -7,10 +7,6 @@ const patient = require('./routes/patient.route');
 app.use('/api/avatar', avatar);
 app.use('/api/patient', patient);
 
-app.get('/', (req, res) => {
-  res.redirect('/api/avatar/');
-});
-
 // server up
 http.createServer(app).listen(app.get('port'), () => {
   console.log('server on port', app.get('port'));
