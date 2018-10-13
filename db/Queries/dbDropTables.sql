@@ -1,3 +1,4 @@
+Use impati;
 DROP TABLE IF EXISTS `patient_history`;
 DROP TABLE IF EXISTS `history_action`;
 DROP TABLE IF EXISTS `dates`;

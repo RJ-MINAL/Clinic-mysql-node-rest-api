@@ -1,17 +1,19 @@
+use impati;
+
 create table clinic(
-idClinic int not null auto_increment primary key,
+id int not null auto_increment primary key,
 name text not null,
 address text not null,
 phone text not null,
 open_horary text not null,
 close_horary text not null,
 email text not null,
-upper_idClinic int,
+upper_clinic int,
 active int not null
 );
 
 create table avatar(
-idAvatar int not null auto_increment primary key,
+id int not null auto_increment primary key,
 code_image int not null,
 skin_color text not null,
 cloth_color text not null,
@@ -20,32 +22,32 @@ active int not null
 );
 
 create table country(
-idCountry int not null auto_increment primary key,
+id int not null auto_increment primary key,
 name text not null,
 code text not null,
 active int not null
 );
 
 create table rol(
-idRol int not null auto_increment primary key,
+id int not null auto_increment primary key,
 description text not null,
 active int not null
 );
 
 create table ocupation(
-idOcupation int not null auto_increment primary key,
+id int not null auto_increment primary key,
 description text not null,
 active int not null
 );
 
 create table action(
-idAction int not null auto_increment primary key,
+id int not null auto_increment primary key,
 description text not null,
 active int not null
 );
 
 create table doctor(
-idDoctor int not null auto_increment primary key,
+id int not null auto_increment primary key,
 name text not null,
 last_name text not null,
 phone text not null,
@@ -61,14 +63,14 @@ id_rol int not null,
 id_avatar int not null,
 id_country int not null,
 active int not null,
-foreign key (id_clinic) references clinic(idClinic),
-foreign key (id_rol) references rol(idRol),
-foreign key (id_avatar) references avatar(idAvatar),
-foreign key (id_country) references country(idCountry)
+foreign key (id_clinic) references clinic(id),
+foreign key (id_rol) references rol(id),
+foreign key (id_avatar) references avatar(id),
+foreign key (id_country) references country(id)
 );
 
 create table patient(
-idPatient int not null auto_increment primary key,
+id int not null auto_increment primary key,
 name text not null,
 last_name text not null,
 email text not null,
@@ -82,36 +84,36 @@ id_country int not null,
 id_clinic int not null,
 id_ocupation int not null,
 active int not null,
-foreign key (id_clinic) references clinic(idClinic),
-foreign key (id_ocupation) references ocupation(idOcupation),
-foreign key (id_avatar) references avatar(idAvatar),
-foreign key (id_country) references country(idCountry)
+foreign key (id_clinic) references clinic(id),
+foreign key (id_ocupation) references ocupation(id),
+foreign key (id_avatar) references avatar(id),
+foreign key (id_country) references country(id)
 );
 
 create table history_action(
-idHistoryAction int not null auto_increment primary key,
+id int not null auto_increment primary key,
 date text not null,
 comment text not null,
 photo text not null,
 active int not null,
 id_doctor int not null,
 id_action int not null,
-foreign key (id_doctor) references doctor(idDoctor),
-foreign key (id_action) references action(idAction)
+foreign key (id_doctor) references doctor(id),
+foreign key (id_action) references action(id)
 );
 
 create table patient_history(
-idPatientHistory int not null auto_increment primary key,
+id int not null auto_increment primary key,
 date text not null,
 active int not null,
 id_patient int not null,
 id_history int not null,
-foreign key (id_patient) references patient(idPatient),
-foreign key (id_history) references history_action(idHistoryAction)
+foreign key (id_patient) references patient(id),
+foreign key (id_history) references history_action(id)
 );
 
 create table dates(
-idDates int not null auto_increment primary key,
+id int not null auto_increment primary key,
 day text not null,
 month text not null,
 year text not null,
@@ -122,7 +124,7 @@ send_email bool not null,
 active int not null,
 id_doctor int not null,
 id_patient int not null,
-foreign key (id_patient) references patient(idPatient),
-foreign key (id_doctor) references doctor(idDoctor)
+foreign key (id_patient) references patient(id),
+foreign key (id_doctor) references doctor(id)
 );
 

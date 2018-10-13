@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
   if (error) return JsonError(res, 400, error.details[0].message);
 
   const dataSchema = {
-    idAvatar: null,
+    id: null,
     code_image: content.code_image,
     skin_color: content.skin_color,
     cloth_color: content.cloth_color,

@@ -7,7 +7,7 @@ module.exports = router => {
     History.getAll(patientId, (err, data) => {
       if (err) return JsonError(res, err.status, err.message, err);
 
-      return JsonSuccess(res, 'history', data, 'Query successful');
+      return JsonSuccess(res, 'history', data);
     });
   });
 };

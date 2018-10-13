@@ -17,7 +17,7 @@ router.get('/:id', (req, res) => {
   Patient.getById(id, (err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    return JsonSuccess(res, 'patient', data, 'Query successful');
+    return JsonSuccess(res, 'patient', data);
   });
 });
 
@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
     address: content.address,
     email: content.email,
     age: content.age,
-    incription_date: content.incription_date,
+    inscription_date: content.inscription_date,
     id_clinic: content.id_clinic,
     id_ocupation: content.id_ocupation,
     id_avatar: content.id_avatar,
@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
     if (data && data.id)
-      return JsonSuccess(res, 'patient', data, 'Patient creado exitosamente');
+      return JsonSuccess(res, 'patient', data, 'Paciente creado exitosamente');
 
     return JsonError(res, 500, 'Internal Error, no data returned');
   });
@@ -70,7 +70,7 @@ router.put('/:id', (req, res) => {
     address: content.address,
     email: content.email,
     age: content.age,
-    incription_date: content.incription_date,
+    inscription_date: content.inscription_date,
     id_clinic: content.id_clinic,
     id_ocupation: content.id_ocupation,
     id_avatar: content.id_avatar,

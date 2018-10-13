@@ -1,11 +1,11 @@
 function JsonError(res, status, message, err) {
-  if (err) console.log(err);
+  if (err) console.log('<DB ERROR>', err);
 
   return res.status(status).json({
     info: {
       success: false,
       type: 'error',
-      error: message
+      message
     },
     responseContent: null
   });
@@ -33,7 +33,8 @@ function Success(res, message) {
   return res.status(200).json({
     info: {
       success: true,
-      type: 'success'
+      type: 'success',
+      message
     }
   });
 }

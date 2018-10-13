@@ -1,3 +1,5 @@
+Use impati;
+
 INSERT INTO `rol` (description, active)
 VALUES ('admin',1),('secretary',0);
 
