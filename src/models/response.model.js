@@ -8,7 +8,10 @@ function JsonError(res, status, message, err) {
     info: {
       success: false,
       type: 'error',
-      error: message
+      status
+    },
+    error: {
+      description: message
     },
     responseContent: null
   });
@@ -20,11 +23,12 @@ function JsonSuccess(res, title, body, message) {
   if (body.constructor === Array) resContent[title] = body;
   else resContent[title] = { ...body };
 
-  if (!message) message = 'Query successful';
+  if (!message) message = 'OK';
   return res.status(200).json({
     info: {
       success: true,
       type: 'success',
+      status: 200,
       message
     },
     responseContent: resContent
@@ -32,13 +36,15 @@ function JsonSuccess(res, title, body, message) {
 }
 
 function Success(res, message) {
-  if (!message) message = 'Query successful';
-  return res.status(200).json({
+  if (!message) message = 'OK';
+  return res.status(204).json({
     info: {
       success: true,
       type: 'success',
+      status: 204,
       message
-    }
+    },
+    data: null
   });
 }
 
