@@ -86,7 +86,9 @@ patientModel.insert = (dataSchema, callback) => {
 patientModel.update = (dataSchema, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
-  const sqlExists = `SELECT * FROM patient WHERE id = ${connection.escape(id)}`;
+  const sqlExists = `SELECT * FROM patient WHERE id = ${connection.escape(
+    dataSchema.id
+  )}`;
 
   const sqlUpdate = `
     UPDATE patient SET
