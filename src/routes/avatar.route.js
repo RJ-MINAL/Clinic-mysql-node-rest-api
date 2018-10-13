@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   Avatar.getAll((err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    return res.status(200).json(data);
+    return JsonSuccess(res, 'avatars', data);
   });
 });
 

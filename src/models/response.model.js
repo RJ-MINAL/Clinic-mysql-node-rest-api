@@ -37,11 +37,11 @@ function JsonSuccess(res, title, body, message) {
 
 function Success(res, message) {
   if (!message) message = 'OK';
-  return res.status(204).json({
+  return res.status(200).json({
     info: {
       success: true,
       type: 'success',
-      status: 204,
+      status: 200,
       message
     },
     data: null

@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
   Patient.getAll((err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    return res.status(200).json(data);
+    return JsonSuccess(res, 'patients', data);
   });
 });
 
