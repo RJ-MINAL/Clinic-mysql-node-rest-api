@@ -42,6 +42,7 @@ patientModel.getById = (id, callback) => {
       last_name: row.last_name,
       phone: row.phone,
       dpi: row.dpi,
+      address: row.address,
       email: row.email,
       inscription_date: row.inscription_date,
       age: row.age,
