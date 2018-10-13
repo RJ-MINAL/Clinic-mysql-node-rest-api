@@ -1,11 +1,14 @@
 function JsonError(res, status, message, err) {
-  if (err) console.log('<DB ERROR>', err);
+  if (err && err.sqlMessage) {
+    console.log('<DB ERROR>', err);
+    message = err.sqlMessage;
+  }
 
   return res.status(status).json({
     info: {
       success: false,
       type: 'error',
-      message
+      error: message
     },
     responseContent: null
   });
