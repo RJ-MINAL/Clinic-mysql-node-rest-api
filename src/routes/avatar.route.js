@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Avatar, validateRequest } = require('../models/avatar.model');
-const { JsonError, JsonSuccess } = require('../models/response.model');
+const { JsonError, JsonSuccess, Success } = require('../models/response.model');
 
 router.get('/', (req, res) => {
   Avatar.getAll((err, data) => {
@@ -16,7 +16,7 @@ router.get('/:id', (req, res) => {
   Avatar.getById(id, (err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    return res.status(200).json(data);
+    return JsonSuccess(res, 'avatar', data);
   });
 });
 
@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
   if (error) return JsonError(res, 400, error.details[0].message);
 
   const dataSchema = {
-    id: null,
+    idAvatar: null,
     code_image: content.code_image,
     skin_color: content.skin_color,
     cloth_color: content.cloth_color,
@@ -64,8 +64,7 @@ router.put('/:id', (req, res) => {
   Avatar.update(dataSchema, function(err, data) {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    if (data && data.id)
-      return JsonSuccess(res, 'avatar', data, `Avatar with ID ${data.id} was updated`);
+    if (data && data.id) return Success(res, `The avatar with ID ${data.id} was updated`);
 
     return JsonError(res, 500, 'Internal Error, no data returned');
   });
@@ -76,8 +75,7 @@ router.delete('/:id', (req, res) => {
   Avatar.delete(id, (err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    if (data && data.id)
-      return JsonSuccess(res, 'avatar', data, `Avatar with ID ${data.id} was deleted`);
+    if (data && data.id) return Success(res, `The avatar with ID ${data.id} was deleted`);
 
     return JsonError(res, 500, 'Internal Error, no data returned');
   });

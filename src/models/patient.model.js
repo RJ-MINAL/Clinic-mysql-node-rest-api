@@ -7,7 +7,7 @@ let patientModel = {};
 patientModel.getAll = callback => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
-  connection.query('SELECT * FROM pacient ORDER BY id', (err, rows) => {
+  connection.query('SELECT * FROM patient ORDER BY idPatient', (err, rows) => {
     if (err) callback(SetError(500, 'Internal Error', err), null);
     else callback(null, rows);
   });
@@ -17,16 +17,15 @@ patientModel.getById = (id, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
   const sql = `
-    SELECT pc.*, av.id as av_id, av.*, 
-	    cl.id as cl_id, cl.name as cl_name,
-      oc.id as oc_id , oc.description,
-      ct.id as ct_id , ct.name as ct_name, ct.code
-    FROM pacient pc 
-    LEFT JOIN avatar av on pc.id_avatar = av.id
-    LEFT JOIN clinic cl on pc.id_clinic = cl.id
-    LEFT JOIN ocupation oc on pc.id_ocupation = oc.id
-    LEFT JOIN country ct on pc.id_country = ct.id
-    WHERE pc.id = ${connection.escape(id)}
+    SELECT pt.*, av.idAvatar, cl.idClinic , 
+      cl.name as cl_name, oc.idOcupation , oc.description,
+      ct.idCountry , ct.name as ct_name, ct.code
+    FROM patient pt 
+    LEFT JOIN avatar av on pt.id_avatar = av.idAvatar
+    LEFT JOIN clinic cl on pt.id_clinic = cl.idClinic
+    LEFT JOIN ocupation oc on pt.id_ocupation = oc.idOcupation
+    LEFT JOIN country ct on pt.id_country = ct.idCountry
+    WHERE pt.idPatient = ${connection.escape(id)}
   `;
 
   connection.query(sql, (err, rows) => {
@@ -43,26 +42,26 @@ patientModel.getById = (id, callback) => {
       phone: row.phone,
       dpi: row.dpi,
       email: row.email,
-      incription_date: row.incription_date,
+      inscription_date: row.inscription_date,
       age: row.age,
       active: row.active,
       clinic: {
-        id: row.cl_id,
+        id: row.idClinic,
         name: row.cl_name
       },
       ocupation: {
-        id: row.oc_id,
+        id: row.idOcupation,
         description: row.description
       },
       avatar: {
-        id: row.av_id,
+        id: row.idAvatar,
         code_image: row.code_image,
         skin_color: row.skin_color,
         cloth_color: row.cloth_color,
         hair_color: row.hair_color
       },
       country: {
-        id: row.ct_id,
+        id: row.idCountry,
         name: row.ct_name,
         code: row.code
       }
@@ -75,7 +74,7 @@ patientModel.getById = (id, callback) => {
 patientModel.insert = (dataSchema, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
-  connection.query('INSERT INTO pacient SET ?', dataSchema, (err, result) => {
+  connection.query('INSERT INTO patient SET ?', dataSchema, (err, result) => {
     if (err) return callback(SetError(500, 'Internal Error', err), null);
 
     dataSchema.id = result.insertId;
@@ -86,8 +85,10 @@ patientModel.insert = (dataSchema, callback) => {
 patientModel.update = (dataSchema, callback) => {
   if (!connection) return callback(SetError(503, 'Server Unavailable'));
 
-  const sql = `
-    UPDATE pacient SET
+  const sqlExists = `SELECT * FROM patient WHERE idPatient = ${connection.escape(id)}`;
+
+  const sqlUpdate = `
+    UPDATE patient SET
     name = ${connection.escape(dataSchema.name)},
     last_name = ${connection.escape(dataSchema.last_name)},
     phone = ${connection.escape(dataSchema.phone)},
@@ -95,24 +96,14 @@ patientModel.update = (dataSchema, callback) => {
     address = ${connection.escape(dataSchema.address)},
     email = ${connection.escape(dataSchema.email)},
     age = ${connection.escape(dataSchema.age)},
-    incription_date = ${connection.escape(dataSchema.incription_date)},
+    inscription_date = ${connection.escape(dataSchema.inscription_date)},
     id_clinic = ${connection.escape(dataSchema.id_clinic)},
     id_ocupation = ${connection.escape(dataSchema.id_ocupation)},
     id_avatar = ${connection.escape(dataSchema.id_avatar)},
     id_country = ${connection.escape(dataSchema.id_country)},
     active = ${connection.escape(dataSchema.active)}
-    WHERE id = ${connection.escape(dataSchema.id)}`;
-
-  connection.query(sql, function(err, result) {
-    if (err) callback(SetError(500, 'Internal Error', err), null);
-    else callback(null, { ...dataSchema });
-  });
-};
-
-patientModel.delete = (id, callback) => {
-  if (!connection) return callback(SetError(503, 'Server Unavailable'));
-
-  const sqlExists = `SELECT * FROM pacient WHERE id = ${connection.escape(id)}`;
+    WHERE idPatient = ${connection.escape(dataSchema.id)}
+  `;
 
   connection.query(sqlExists, (err, row) => {
     if (err) return callback(SetError(500, 'Internal Error', err), null);
@@ -120,8 +111,26 @@ patientModel.delete = (id, callback) => {
     if (row === undefined || row.length == 0)
       return callback(SetError(404, 'The Patient with the given ID was not found', err));
 
-    const sql = `DELETE FROM pacient WHERE id = ${connection.escape(id)}`;
-    connection.query(sql, (err, result) => {
+    connection.query(sqlUpdate, function(err, result) {
+      if (err) callback(SetError(500, 'Internal Error', err), null);
+      else callback(null, { ...dataSchema });
+    });
+  });
+};
+
+patientModel.delete = (id, callback) => {
+  if (!connection) return callback(SetError(503, 'Server Unavailable'));
+
+  const sqlExists = `SELECT * FROM patient WHERE idPatient = ${connection.escape(id)}`;
+
+  connection.query(sqlExists, (err, row) => {
+    if (err) return callback(SetError(500, 'Internal Error', err), null);
+
+    if (row === undefined || row.length == 0)
+      return callback(SetError(404, 'The Patient with the given ID was not found', err));
+
+    const sqlDelete = `DELETE FROM patient WHERE idPatient = ${connection.escape(id)}`;
+    connection.query(sqlDelete, (err, result) => {
       if (err) callback(SetError(500, 'Internal Error', err), null);
       else callback(null, { ...row[0] });
     });

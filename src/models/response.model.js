@@ -3,25 +3,38 @@ function JsonError(res, status, message, err) {
 
   return res.status(status).json({
     info: {
+      success: false,
       type: 'error',
-      message
+      error: message
     },
     responseContent: null
   });
 }
 
 function JsonSuccess(res, title, body, message) {
-  let resContent = {};
+  const resContent = {};
 
   if (body.constructor === Array) resContent[title] = body;
   else resContent[title] = { ...body };
 
+  if (!message) message = 'Query successful';
   return res.status(200).json({
     info: {
+      success: true,
       type: 'success',
       message
     },
     responseContent: resContent
+  });
+}
+
+function Success(res, message) {
+  if (!message) message = 'Query successful';
+  return res.status(200).json({
+    info: {
+      success: true,
+      type: 'success'
+    }
   });
 }
 
@@ -41,4 +54,5 @@ function SetError(code, message, dbError) {
 
 exports.JsonError = JsonError;
 exports.JsonSuccess = JsonSuccess;
+exports.Success = Success;
 exports.SetError = SetError;
