@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { Country } = require('../models/country.model');
+const { Ocupation } = require('../models/ocupation.model');
 const { JsonError, JsonSuccess } = require('../models/response.model');
 
 router.get('/', (req, res) => {
-  Country.getAll((err, data) => {
+  Ocupation.getAll((err, data) => {
     if (err) return JsonError(res, err.status, err.message, err);
 
-    return JsonSuccess(res, 'countries', data);
+    return JsonSuccess(res, 'ocupations', data);
   });
 });
 
